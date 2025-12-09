@@ -1,0 +1,10 @@
+1. Optimize the binom cache to account for the fact the binoms will all have one row and also that the FK computation doesn't use all binoms cached AND the binoms have certain symmetries that can be exploited to reduce the size of the cache.
+
+^The above is crucial! It is my next immediate priority.^
+
+
+
+
+2. Optimize the polynomial multiplication to use the fact that the polynomials you're multiplying have specific forms.
+3. Optimize the links numerical computations.
+4. Add an "unsafe" mode that skips cache existence checks. Maybe. This might actually cause more harm than good in the long run.
