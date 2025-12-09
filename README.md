@@ -1,52 +1,70 @@
 # FK-Alpha: Gukov-Manolescu Knot Invariant Computation
 
-A computational framework for computing Gukov-Manolescu two-variable series F_K(x,q) for knot complements using braid representations. This implementation processes crossing data through quantum algebraic operations and outputs polynomial coefficients representing knot invariants.
+A computational framework for computing Gukov-Manolescu two-variable series F_K(x,q) for knot complements using braid representations.
 
 ## 🚀 Quick Start
 
-### Method 1: Using Python Interface (Recommended)
+### Method 1: Complete Setup and Run
 ```bash
-# Edit main.py to set your braid and run computation
-python main.py
-```
+# 1. Install Python dependencies
+pip install -r requirements.txt
 
-### Method 2: Direct C++ Binary
-```bash
-# Compile the FK computation engine
+# 2. Compile the FK computation engine for your platform
 g++ -O3 -o fk_linux fk.cpp -std=c++17
 
-# Run computation with input/output files
+# 3. Edit main.py to set your braid (lines 132-137)
+#    Example: braids = [[1, 1, 1]] for trefoil knot
+
+# 4. Run the computation
+python3 main.py
+
+# 5. Check results in Data/Output/[knot_name].json
+```
+
+### Method 2: Direct C++ Binary (Advanced)
+```bash
+# Use pre-computed input files
 ./fk_linux "Data/Input/input_file" "Data/Output/output_file"
 ```
 
-### Method 3: Using Pre-computed Examples
+### Method 3: Quick Test with Pre-computed Example
 ```bash
-# Run trefoil knot [1,1,1] with degree 5
+# Run trefoil knot [1,1,1] with degree 5 (no Python needed)
+g++ -O3 -o fk_linux fk.cpp -std=c++17
 ./fk_linux "Data/Input/braid_len_3_deg_5_knot_0" "Data/Output/trefoil_example"
+cat Data/Output/trefoil_example.json
 ```
 
 ## 🏗️ Build Requirements
 
 ### Dependencies
 ```bash
-# Required Python packages
-pip install sympy gurobipy
+# Install all required packages
+pip install -r requirements.txt
+
+# Or install individually:
+pip install gurobipy numpy sympy
 
 # System requirements
 - C++17 compatible compiler (g++, clang++)
 - Python 3.7+
-- Gurobi optimizer (for ILP solving)
+- Linux/macOS (tested on Ubuntu/Debian)
 ```
+
+### Important Notes
+- **Platform-specific compilation required**: The included `_` binary is for macOS and won't work on Linux
+- **Gurobi license**: Academic license available for free, commercial license required for commercial use
+- **Memory**: Computations scale as O(degree^components), keep degree ≤ 25 for practical use
 
 ### Compilation
 ```bash
-# Basic compilation
+# Basic compilation (recommended)
 g++ -O3 -o fk_linux fk.cpp -std=c++17
 
-# With debug information
-g++ -g -O2 -o fk_debug fk.cpp -std=c++17
+# Debug version
+g++ -g -O0 -o fk_debug fk.cpp -std=c++17
 
-# For profiling
+# With profiling
 g++ -O3 -pg -o fk_profile fk.cpp -std=c++17
 ```
 
@@ -136,27 +154,6 @@ assignment_data            # Symbolic variable assignments
 }
 ```
 
-This represents: **F_K(x,q) = -q·x⁰ + q²·x² + q³·x³**
-
-## 🔬 Mathematical Background
-
-The Gukov-Manolescu invariant F_K(x,q) is computed through:
-
-1. **Braid Preprocessing**: Convert knot braid to crossing data
-2. **ILP Setup**: Generate angle state constraints  
-3. **Quantum Algebra**: Apply q-binomial coefficients and q-Pochhammer symbols
-4. **Accumulation**: Sum contributions from all feasible angle states
-
-The computation follows the framework from:
-*S. Gukov, C. Manolescu, "A two-variable series for knot complements"*
-
-## ⚙️ Performance Notes
-
-- **Memory**: Scales as O(degree^components)
-- **Time**: Depends on ILP solver efficiency
-- **Caching**: Pre-computed quantum operations stored in `Data/Caches/`
-- **Degree Limits**: Practical computation typically degree ≤ 25
-
 ## 🧪 Testing
 
 ```bash
@@ -170,20 +167,7 @@ python main.py  # Includes verification step
 time ./fk_linux "Data/Input/braid_len_8_deg_10_knot_1" "Data/Output/perf_test"
 ```
 
-## 🛠️ Troubleshooting
-
-### Common Issues
-
-1. **Gurobi License**: Ensure Gurobi is properly licensed
-2. **Binary Format**: Recompile if moving between architectures
-3. **Memory Limits**: Reduce degree for large braids
-4. **Missing Input**: Check CSV file format matches specification
-
-### Debug Mode
-```bash
-# Compile with debug info
-g++ -g -DDEBUG -o fk_debug fk.cpp -std=c++17
-
-# Run with detailed output
-./fk_debug "input" "output" 2>&1 | tee debug.log
-```
+### Platform-Specific Notes
+- **Linux**: Use `g++` compiler, ensure `build-essential` package installed
+- **macOS**: Use `clang++` or `g++` from Homebrew 
+- **Windows**: Use WSL or Visual Studio with C++17 support
